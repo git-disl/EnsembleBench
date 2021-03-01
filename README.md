@@ -17,6 +17,8 @@ A set of tools for building high diversity ensembles.
 * a suite of baseline diversity metrics and optimized diversity metrics for identifying and selecting ensembles with high diversity and high quality;
 * representative ensemble consensus methods: soft voting (model averaging), majority voting, plurality voting and boosting voting.
 
+CogMI 2020 Presentation Video: https://youtu.be/ErZj_OxyYxc
+
 If you find this work useful in your research, please cite the following paper:
 
 **Bibtex**:
