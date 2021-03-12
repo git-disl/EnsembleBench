@@ -23,21 +23,15 @@ If you find this work useful in your research, please cite the following paper:
 
 **Bibtex**:
 ```bibtex
-@ARTICLE{ensemblebench,
-       author = {{Wu}, Yanzhao and {Liu}, Ling and {Xie}, Zhongwei and {Bae}, Juhyun and
-         {Chow}, Ka-Ho and {Wei}, Wenqi},
-        title = "{Promoting High Diversity Ensemble Learning with EnsembleBench}",
-      journal = {arXiv e-prints},
-     keywords = {Computer Science - Machine Learning},
-         year = {2020},
-        month = Oct,
-          eid = {arXiv:2010.10623},
-        pages = {arXiv:2010.10623},
-archivePrefix = {arXiv},
-       eprint = {2010.10623},
- primaryClass = {cs.LG},
-       adsurl = {https://ui.adsabs.harvard.edu/abs/2020arXiv201010623W},
-      adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+@INPROCEEDINGS{ensemblebench,
+       author={Y. {Wu} and L. {Liu} and Z. {Xie} and J. {Bae} and K. -H. {Chow} and W. {Wei}},
+       booktitle={2020 IEEE Second International Conference on Cognitive Machine Intelligence (CogMI)},
+       title={Promoting High Diversity Ensemble Learning with EnsembleBench},
+       year={2020},
+       volume={},
+       number={},
+       pages={208-217},
+       doi={10.1109/CogMI50398.2020.00034}
 }
 ```
 
