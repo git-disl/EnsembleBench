@@ -3,33 +3,33 @@ import numpy as np
 _allDiversityMetrics = set(['CC', 'QS', 'CK', 'BD', 'ENTROPY', 'KW', 'GD', 'FK'])
 
 # pair-wise
-from diversityMetrics import correlation_coefficient
+from .diversityMetrics import correlation_coefficient
 def group_correlation_coefficient(predictions, label):
     pred = np.transpose(predictions, (1, 0))
     return correlation_coefficient(pred, label)
-from diversityMetrics import Q_statistic
+from .diversityMetrics import Q_statistic
 def group_Q_statistic(predictions, label):
     pred = np.transpose(predictions, (1, 0))
     return Q_statistic(pred, label)
-from diversityMetrics import cohen_kappa_statistic
+from .diversityMetrics import cohen_kappa_statistic
 def group_kappa_score(predictions):
     pred = np.transpose(predictions, (1, 0))
     return cohen_kappa_statistic(pred)
-from diversityMetrics import binary_disagreement
+from .diversityMetrics import binary_disagreement
 def group_binary_disagreement(predictions, label):
     pred = np.transpose(predictions, (1, 0))
     return binary_disagreement(pred, label)
 
 # non-pair-wise
-from diversityMetrics import entropy
+from .diversityMetrics import entropy
 def group_entropy(predictions, label):
     pred = np.transpose(predictions, (1, 0))
     return entropy(pred, label)
-from diversityMetrics import kohavi_wolpert_variance
+from .diversityMetrics import kohavi_wolpert_variance
 def group_KW_variance(predictions, label):
     pred = np.transpose(predictions, (1, 0))
     return kohavi_wolpert_variance(pred, label)
-from diversityMetrics import generalized_diversity
+from .diversityMetrics import generalized_diversity
 def group_generalized_diversity(predictions, label):
     pred = np.transpose(predictions, (1, 0))
     return generalized_diversity(pred, label)

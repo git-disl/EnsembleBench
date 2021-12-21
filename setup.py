@@ -23,6 +23,7 @@ setup(
           'numpy',
           'matplotlib',
           'scikit-learn',
+          'statsmodels',
       ],
   classifiers=[
     'Development Status :: 3 - Alpha',
