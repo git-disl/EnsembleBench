@@ -252,3 +252,4 @@ venv.bak/
 
 # binary object
 *.obj
+*.joblib
