@@ -76,6 +76,14 @@ def normalize01(array):
         return array
     return (array-min(array))/(max(array)-min(array))
 
+def isTeamContainsAny(tA, tBs):
+    setA = set(tA)
+    for tB in tBs:
+        assert len(tA) >= len(tB), "len(tA) >= len(tB)"
+        if set(tB).issubset(setA):
+            return True
+    return False
+
 def centeredMean(nums):
     if len(nums) <= 2:
         return np.mean(nums)
