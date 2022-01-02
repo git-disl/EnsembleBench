@@ -90,7 +90,7 @@ def centeredMean(nums):
     else:
         return (np.sum(nums) - np.max(nums) - np.min(nums)) / (len(nums) - 2) 
 
-def getNTeamStatistics(teamNameList, accuracyDict, minAcc, avgAcc, maxAcc, tmpAccList):
+def getNTeamStatistics(teamNameList, accuracyDict, minAcc, avgAcc, maxAcc, tmpAccList, topN=5):
     nAboveMin = 0
     nAboveAvg = 0
     nAboveMax = 0
@@ -108,8 +108,13 @@ def getNTeamStatistics(teamNameList, accuracyDict, minAcc, avgAcc, maxAcc, tmpAc
             #print(teamName)
         # count whether an ensemble is higher than all its member model
         nHigherMember += 1
+        if ',' in teamName:
+            teamName = teamName.split(',')
         for modelName in teamName:
-            modelAcc = tmpAccList[int(modelName)][0].item()
+            if len(tmpAccList) > 1 and isinstance(tmpAccList[0], list):
+                modelAcc = tmpAccList[int(modelName)][0].item()
+            else:
+                modelAcc = tmpAccList[int(modelName)].item()
             if acc < modelAcc:
                 nHigherMember -= 1
                 break
