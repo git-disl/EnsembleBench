@@ -90,7 +90,7 @@ def centeredMean(nums):
     else:
         return (np.sum(nums) - np.max(nums) - np.min(nums)) / (len(nums) - 2) 
 
-def getNTeamStatistics(teamNameList, accuracyDict, minAcc, avgAcc, maxAcc, tmpAccList, topN=5):
+def getNTeamStatistics(teamNameList, accuracyDict, minAcc, avgAcc, maxAcc, tmpAccList):
     nAboveMin = 0
     nAboveAvg = 0
     nAboveMax = 0
@@ -119,3 +119,20 @@ def getNTeamStatistics(teamNameList, accuracyDict, minAcc, avgAcc, maxAcc, tmpAc
                 nHigherMember -= 1
                 break
     return len(teamNameList), np.min(allAcc), np.max(allAcc), np.mean(allAcc), np.std(allAcc), nHigherMember, nAboveMax, nAboveAvg, nAboveMin
+
+def printTopNTeamStatistics(teamNameList, accuracyDict, minAcc, avgAcc, maxAcc, tmpAccList, divScores, dm, topN=5, divFormat="teamName-dm"):
+    tmpFQTeamNameAccList = []
+    for teamName in teamNameList:
+        if divFormat == "dm-teamName":
+            tmpFQTeamNameAccList.append([divScores[dm][teamName],
+                                     teamName, accuracyDict[teamName]])
+        else:
+            tmpFQTeamNameAccList.append([divScores[teamName][dm],
+                                     teamName, accuracyDict[teamName]])
+    tmpFQTeamNameAccList.sort()
+    tmpFQTeamNameAccList = tmpFQTeamNameAccList[:topN]
+    for i in range(min(topN, len(tmpFQTeamNameAccList))):
+        print(tmpFQTeamNameAccList[i])
+    print(dm, getNTeamStatistics([tmpFTA[1] for tmpFTA in tmpFQTeamNameAccList], 
+                             accuracyDict, minAcc, avgAcc, maxAcc, tmpAccList))
+
