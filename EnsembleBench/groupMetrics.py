@@ -1,6 +1,6 @@
 import numpy as np
 
-_allDiversityMetrics = set(['CC', 'QS', 'CK', 'BD', 'ENTROPY', 'KW', 'GD', 'FK'])
+_allDiversityMetrics = set(['CK', 'QS', 'BD', 'FK', 'GD', 'KW'])
 
 # pair-wise
 from .diversityMetrics import correlation_coefficient
