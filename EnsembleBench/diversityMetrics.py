@@ -87,6 +87,7 @@ def kohavi_wolpert_variance(M, y_true):
 def generalized_diversity(M, y_true):
     N = M.shape[1]
     L = M.shape[0]
+    #print('num samples:', N, 'num models:', L)
     pi = np.zeros(N)
     for i in range(N):
         pIdx = 0

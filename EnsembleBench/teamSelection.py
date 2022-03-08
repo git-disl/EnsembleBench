@@ -1,5 +1,7 @@
 import numpy as np
 import copy
+from operator import itemgetter
+
 
 def getThreshold(target, metric, k=1.0):
     avg = np.mean(target)
@@ -76,6 +78,14 @@ def normalize01(array):
         return array
     return (array-min(array))/(max(array)-min(array))
 
+def isTeamContainsAny(tA, tBs):
+    setA = set(tA)
+    for tB in tBs:
+        assert len(tA) >= len(tB), "len(tA) >= len(tB)"
+        if set(tB).issubset(setA):
+            return True
+    return False
+
 def centeredMean(nums):
     if len(nums) <= 2:
         return np.mean(nums)
@@ -100,9 +110,51 @@ def getNTeamStatistics(teamNameList, accuracyDict, minAcc, avgAcc, maxAcc, tmpAc
             #print(teamName)
         # count whether an ensemble is higher than all its member model
         nHigherMember += 1
+        if ',' in teamName:
+            teamName = teamName.split(',')
         for modelName in teamName:
-            modelAcc = tmpAccList[int(modelName)][0].item()
+            if len(tmpAccList) > 1 and isinstance(tmpAccList[0], list):
+                modelAcc = tmpAccList[int(modelName)][0].item()
+            else:
+                modelAcc = tmpAccList[int(modelName)].item()
             if acc < modelAcc:
                 nHigherMember -= 1
                 break
     return len(teamNameList), np.min(allAcc), np.max(allAcc), np.mean(allAcc), np.std(allAcc), nHigherMember, nAboveMax, nAboveAvg, nAboveMin
+
+# random selection
+def randomSelection(teamNameList, nRandomSamples = 1, nRepeat = 1, verbose = False):
+    selectedTeamLists = []
+    for i in range(nRepeat):
+        randomIdx = np.random.choice(np.arange(len(teamNameList)), nRandomSamples)
+        for idx in randomIdx:
+            selectedTeamLists.append(teamNameList[idx])
+    if verbose:
+        print(selectedTeamLists)
+    return selectedTeamLists
+
+def printTopNTeamStatistics(teamNameList, accuracyDict, minAcc, avgAcc, maxAcc, tmpAccList, divScores, dm, topN=5, divFormat="teamName-dm", verbose=False):
+    tmpFQTeamNameAccList = []
+    for teamName in teamNameList:
+        if divFormat == "dm-teamName":
+            tmpFQTeamNameAccList.append([divScores[dm][teamName],
+                                     teamName, accuracyDict[teamName]])
+        else:
+            tmpFQTeamNameAccList.append([divScores[teamName][dm],
+                                     teamName, accuracyDict[teamName]])
+    
+    #tmpFQTeamNameAccList.sort()
+    
+    tmpFQTeamNameAccList = sorted(tmpFQTeamNameAccList, key=itemgetter(2), reverse=True)
+    tmpFQTeamNameAccList = sorted(tmpFQTeamNameAccList, key=itemgetter(0))
+
+    tmpFQTeamNameAccList = tmpFQTeamNameAccList[:topN]
+    if verbose:
+        tmpTeamNameList = []
+        for i in range(min(topN, len(tmpFQTeamNameAccList))):
+            print(tmpFQTeamNameAccList[i])
+            tmpTeamNameList.append(tmpFQTeamNameAccList[i][1])
+        print(tmpTeamNameList)
+    print(dm, getNTeamStatistics([tmpFTA[1] for tmpFTA in tmpFQTeamNameAccList], 
+                             accuracyDict, minAcc, avgAcc, maxAcc, tmpAccList))
+

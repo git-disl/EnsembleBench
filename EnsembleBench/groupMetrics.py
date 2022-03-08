@@ -63,3 +63,36 @@ def calAllDiversityMetrics(prediction, target=None, metrics=None):
         #print(m)
         results.append(calDiversityMetric(prediction, target, m))
     return results
+
+# calFocalDiversityScores
+def calFocalDiversityScores(
+    oneFocalModel,
+    teamModelList,
+    y_pred_list,
+    gt_label,
+    negative_sample_list,
+    diversityMetricsList,
+    # save time
+    crossValidation = True,
+    nRandomSamples = 100,
+    crossValidationTimes = 3
+):
+    # num samples x num member models
+    teamPredictions = np.transpose(y_pred_list[teamModelList, ...], (1, 0))
+    np.random.seed(2021) # fix random state
+    if crossValidation:
+        tmpMetrics = list()
+        for _ in range(crossValidationTimes):
+            randomIdx = np.random.choice(np.arange(len(negative_sample_list[oneFocalModel])), nRandomSamples)        
+            tmpMetrics.append(np.array(calAllDiversityMetrics(
+                              teamPredictions[negative_sample_list[oneFocalModel]][randomIdx],
+                              gt_label[negative_sample_list[oneFocalModel]][randomIdx],
+                              diversityMetricsList)))
+        tmpMetrics = np.mean(np.array(tmpMetrics), axis=0)
+    else:
+        tmpMetrics = np.array(calAllDiversityMetrics(
+                              teamPredictions[negative_sample_list[oneFocalModel]],
+                              gt_label[negative_sample_list[oneFocalModel]],
+                              diversityMetricsList))
+
+    return {diversityMetricsList[i]:tmpMetrics[i].item()  for i in range(len(tmpMetrics))}
