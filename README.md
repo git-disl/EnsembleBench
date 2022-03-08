@@ -51,7 +51,7 @@ If you find this work useful in your research, please cite the following papers:
     volume={},
     number={},
     pages={1433-1438},
-doi={10.1109/ICDM51629.2021.00184}
+    doi={10.1109/ICDM51629.2021.00184}
 }
 ```
 
@@ -73,7 +73,7 @@ doi={10.1109/ICDM51629.2021.00184}
 4. Run the demos under the demo folder.
 
 
-If you would like simply use some functions provided by EnsembleBench, you may install it using the following 
+If you would like to simply use some functions provided by EnsembleBench, you may install it using the following command.
     
     pip install EnsembleBench
 
