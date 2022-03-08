@@ -1,2 +1,2 @@
-conda activate ens
+#conda activate ens
 export PYTHONPATH=$PYTHONPATH:`pwd`
