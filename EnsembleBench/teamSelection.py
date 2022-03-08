@@ -1,5 +1,7 @@
 import numpy as np
 import copy
+from operator import itemgetter
+
 
 def getThreshold(target, metric, k=1.0):
     avg = np.mean(target)
@@ -120,7 +122,18 @@ def getNTeamStatistics(teamNameList, accuracyDict, minAcc, avgAcc, maxAcc, tmpAc
                 break
     return len(teamNameList), np.min(allAcc), np.max(allAcc), np.mean(allAcc), np.std(allAcc), nHigherMember, nAboveMax, nAboveAvg, nAboveMin
 
-def printTopNTeamStatistics(teamNameList, accuracyDict, minAcc, avgAcc, maxAcc, tmpAccList, divScores, dm, topN=5, divFormat="teamName-dm"):
+# random selection
+def randomSelection(teamNameList, nRandomSamples = 1, nRepeat = 1, verbose = False):
+    selectedTeamLists = []
+    for i in range(nRepeat):
+        randomIdx = np.random.choice(np.arange(len(teamNameList)), nRandomSamples)
+        for idx in randomIdx:
+            selectedTeamLists.append(teamNameList[idx])
+    if verbose:
+        print(selectedTeamLists)
+    return selectedTeamLists
+
+def printTopNTeamStatistics(teamNameList, accuracyDict, minAcc, avgAcc, maxAcc, tmpAccList, divScores, dm, topN=5, divFormat="teamName-dm", verbose=False):
     tmpFQTeamNameAccList = []
     for teamName in teamNameList:
         if divFormat == "dm-teamName":
@@ -129,10 +142,19 @@ def printTopNTeamStatistics(teamNameList, accuracyDict, minAcc, avgAcc, maxAcc, 
         else:
             tmpFQTeamNameAccList.append([divScores[teamName][dm],
                                      teamName, accuracyDict[teamName]])
-    tmpFQTeamNameAccList.sort()
+    
+    #tmpFQTeamNameAccList.sort()
+    
+    tmpFQTeamNameAccList = sorted(tmpFQTeamNameAccList, key=itemgetter(2), reverse=True)
+    tmpFQTeamNameAccList = sorted(tmpFQTeamNameAccList, key=itemgetter(0))
+
     tmpFQTeamNameAccList = tmpFQTeamNameAccList[:topN]
-    for i in range(min(topN, len(tmpFQTeamNameAccList))):
-        print(tmpFQTeamNameAccList[i])
+    if verbose:
+        tmpTeamNameList = []
+        for i in range(min(topN, len(tmpFQTeamNameAccList))):
+            print(tmpFQTeamNameAccList[i])
+            tmpTeamNameList.append(tmpFQTeamNameAccList[i][1])
+        print(tmpTeamNameList)
     print(dm, getNTeamStatistics([tmpFTA[1] for tmpFTA in tmpFQTeamNameAccList], 
                              accuracyDict, minAcc, avgAcc, maxAcc, tmpAccList))
 
