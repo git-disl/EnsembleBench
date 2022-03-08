@@ -61,12 +61,12 @@ doi={10.1109/ICDM51629.2021.00184}
 ### Installation
 
 1. It is recommended to clone this git repo and refer to the demo folder for building your own projects using EnsembleBench.
-    
-    git clone https://github.com/git-disl/EnsembleBench.git
+
+       git clone https://github.com/git-disl/EnsembleBench.git
     
 2. Initialize the environmental variables:
 
-    source env.sh
+       source env.sh
 
 3. Install the Python dependencies.
 
