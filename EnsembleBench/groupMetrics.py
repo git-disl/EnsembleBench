@@ -38,21 +38,22 @@ def fleiss_kappa_score(predictions):
     pred, _ = statsmodels.stats.inter_rater.aggregate_raters(predictions)
     return statsmodels.stats.inter_rater.fleiss_kappa(pred)
 
+# redefine diversity: higher diversity score -> higher ensemble diversity
 def calDiversityMetric(prediction, target=None, metric='CK'):
     if metric not in _allDiversityMetrics:
         raise Exception("Diversity Metric Not Found!")
     if metric == 'CK':
-        return group_kappa_score(prediction)
+        return 1.0 - group_kappa_score(prediction)
     if metric == 'QS' and len(target) > 0:
-        return group_Q_statistic(prediction, target)
+        return 1.0 - group_Q_statistic(prediction, target)
     if metric == 'BD' and len(target) > 0:
-        return 1.0 - group_binary_disagreement(prediction, target)
+        return group_binary_disagreement(prediction, target)
     if metric == 'FK':
-        return fleiss_kappa_score(prediction)
+        return 1.0 - fleiss_kappa_score(prediction)
     if metric == 'GD' and len(target) > 0:
-        return 1.0 - group_generalized_diversity(prediction, target)
+        return group_generalized_diversity(prediction, target)
     if metric == 'KW' and len(target) > 0:
-        return 1.0 - group_KW_variance(prediction, target)
+        return group_KW_variance(prediction, target)
     raise Exception("Diversity Metric Error!")
 
 def calAllDiversityMetrics(prediction, target=None, metrics=None):

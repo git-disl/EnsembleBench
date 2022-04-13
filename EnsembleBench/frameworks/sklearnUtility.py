@@ -15,7 +15,10 @@ def getEnsModelPred(
     else:
         org_estimators = ens_wrapper.estimators_
         ens_wrapper = copy.deepcopy(ens_wrapper)
-        ens_wrapper.estimators_ = org_estimators[model_ids, ...]
+        if isinstance(ens_wrapper.estimators_, list):
+            ens_wrapper.estimators_ = [org_estimators[mID] for mID in model_ids]
+        else:
+            ens_wrapper.estimators_ = org_estimators[model_ids, ...]
         y_pred = ens_wrapper.predict(X)
         return y_pred
 

@@ -92,11 +92,15 @@ def centeredMean(nums):
     else:
         return (np.sum(nums) - np.max(nums) - np.min(nums)) / (len(nums) - 2) 
 
-def getNTeamStatistics(teamNameList, accuracyDict, minAcc, avgAcc, maxAcc, tmpAccList):
+def getNTeamStatistics(teamNameList, accuracyDict, minAcc, avgAcc, maxAcc, tmpAccList, targetAcc=None, calHigherMemberAvg=False):
+    if targetAcc is None: # for compatibility
+        targetAcc = maxAcc
     nAboveMin = 0
     nAboveAvg = 0
     nAboveMax = 0
     nHigherMember = 0
+    nHigherMemberAvg = 0
+    nHigherTarget = 0
     allAcc = []
     for teamName in teamNameList:
         acc = accuracyDict[teamName]
@@ -120,7 +124,23 @@ def getNTeamStatistics(teamNameList, accuracyDict, minAcc, avgAcc, maxAcc, tmpAc
             if acc < modelAcc:
                 nHigherMember -= 1
                 break
-    return len(teamNameList), np.min(allAcc), np.max(allAcc), np.mean(allAcc), np.std(allAcc), nHigherMember, nAboveMax, nAboveAvg, nAboveMin
+        if acc >= targetAcc:
+            nHigherTarget += 1
+        # count whether an ensemble is higher than member model mean
+        if calHigherMemberAvg:
+            tmpModelAccList = []
+            for modelName in teamName:
+                if len(tmpAccList) > 1 and isinstance(tmpAccList[0], list):
+                    modelAcc = tmpAccList[int(modelName)][0].item()
+                else:
+                    modelAcc = tmpAccList[int(modelName)].item()
+                tmpModelAccList.append(modelAcc)
+            if acc >= np.mean(tmpModelAccList):
+                nHigherMemberAvg += 1
+    if calHigherMemberAvg:
+        return len(teamNameList), np.min(allAcc), np.max(allAcc), np.mean(allAcc), np.std(allAcc), nHigherMember, nAboveMax, nAboveAvg, nAboveMin, nHigherTarget, nHigherMemberAvg
+    else:
+        return len(teamNameList), np.min(allAcc), np.max(allAcc), np.mean(allAcc), np.std(allAcc), nHigherMember, nAboveMax, nAboveAvg, nAboveMin, nHigherTarget
 
 # random selection
 def randomSelection(teamNameList, nRandomSamples = 1, nRepeat = 1, verbose = False):
@@ -133,7 +153,7 @@ def randomSelection(teamNameList, nRandomSamples = 1, nRepeat = 1, verbose = Fal
         print(selectedTeamLists)
     return selectedTeamLists
 
-def printTopNTeamStatistics(teamNameList, accuracyDict, minAcc, avgAcc, maxAcc, tmpAccList, divScores, dm, topN=5, divFormat="teamName-dm", verbose=False):
+def printTopNTeamStatistics(teamNameList, accuracyDict, minAcc, avgAcc, maxAcc, tmpAccList, targetAcc, divScores, dm, topN=5, divFormat="teamName-dm", verbose=False):
     tmpFQTeamNameAccList = []
     for teamName in teamNameList:
         if divFormat == "dm-teamName":
@@ -156,5 +176,5 @@ def printTopNTeamStatistics(teamNameList, accuracyDict, minAcc, avgAcc, maxAcc, 
             tmpTeamNameList.append(tmpFQTeamNameAccList[i][1])
         print(tmpTeamNameList)
     print(dm, getNTeamStatistics([tmpFTA[1] for tmpFTA in tmpFQTeamNameAccList], 
-                             accuracyDict, minAcc, avgAcc, maxAcc, tmpAccList))
+                             accuracyDict, minAcc, avgAcc, maxAcc, tmpAccList, targetAcc))
 
