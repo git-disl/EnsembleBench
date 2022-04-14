@@ -12,59 +12,38 @@ def getThreshold(target, metric, k=1.0):
     return np.max(metric)
 
 from sklearn.cluster import KMeans
-def getThresholdFromClusteringKMeans(target, metric, kmeansInit='random'):
-    data = [[t, m] for t, m in zip(target, metric)]
-    kmeans = KMeans(n_clusters=2, init=kmeansInit, random_state=0).fit(data)
-    c0 = metric[np.ma.make_mask(kmeans.labels_)]
-    c0min, c0max = min(c0), max(c0)
-    c1 = metric[np.logical_not(kmeans.labels_)]
-    c1min, c1max = min(c1), max(c1)
-    if c0min > c1max or c1min > c0max:
-        return max(c0min, c1min)
-    return min(c0max, c1max)
-
-def getThresholdFromKMeans(target, metric, kmeansInit='random'):
-    data = [[t, m] for t, m in zip(target, metric)]
-    kmeans = KMeans(n_clusters=2, init=kmeansInit, random_state=0).fit(data)
-    c0 = metric[np.ma.make_mask(kmeans.labels_)]
-    c0min, c0max = min(c0), max(c0)
-    c1 = metric[np.logical_not(kmeans.labels_)]
-    c1min, c1max = min(c1), max(c1)
-    if c0min > c1max or c1min > c0max:
-        return max(c0min, c1min)
-    return min(c0max, c1max), kmeans
 
 def getThresholdClusteringKMeans(target, metric, kmeansInit='random'):
     data = [[t, m] for t, m in zip(target, metric)]
     if kmeansInit == 'strategic':
-        kmeansInit=np.array([[np.max(target), np.min(metric)],
-                             [np.min(target), np.max(metric)]])
+        kmeansInit=np.array([[np.min(target), np.min(metric)],
+                             [np.max(target), np.max(metric)]])
     
-    kmeans = KMeans(n_clusters=2, init=kmeansInit, random_state=0).fit(data)
+    kmeans = KMeans(n_clusters=2, init=kmeansInit, n_init=1, random_state=0).fit(data)
     c0 = metric[np.logical_not(kmeans.labels_)]
     c0min, c0max = min(c0), max(c0)
     c1 = metric[np.ma.make_mask(kmeans.labels_)]
     c1min, c1max = min(c1), max(c1)
     centers = kmeans.cluster_centers_
-    if centers[0][0] > centers[1][0]:
-        return c1min, kmeans
-    return c0min, kmeans
+    if centers[0][0] < centers[1][0]:
+        return c0max, kmeans
+    return c1max, kmeans
 
 def getThresholdClusteringKMeansCenter(target, metric, kmeansInit='random'):
     data = [[t, m] for t, m in zip(target, metric)]
     if kmeansInit == 'strategic':
-        kmeansInit=np.array([[np.max(target), np.min(metric)],
-                             [np.min(target), np.max(metric)]])
+        kmeansInit=np.array([[np.min(target), np.min(metric)],
+                             [np.max(target), np.max(metric)]])
     
-    kmeans = KMeans(n_clusters=2, init=kmeansInit, random_state=0).fit(data)
+    kmeans = KMeans(n_clusters=2, init=kmeansInit, n_init=1, random_state=0).fit(data)
     c0 = metric[np.logical_not(kmeans.labels_)]
     c0min, c0max = min(c0), max(c0)
     c1 = metric[np.ma.make_mask(kmeans.labels_)]
     c1min, c1max = min(c1), max(c1)
     centers = kmeans.cluster_centers_
-    if centers[0][0] > centers[1][0]:
-        return centers[1][1], kmeans
-    return centers[0][1], kmeans
+    if centers[0][0] < centers[1][0]:
+        return centers[0][1], kmeans
+    return centers[1][1], kmeans
 
 def oneThirdThreshold(metric):
     metricSort = copy.deepcopy(metric)
