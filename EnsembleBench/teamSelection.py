@@ -145,7 +145,7 @@ def printTopNTeamStatistics(teamNameList, accuracyDict, minAcc, avgAcc, maxAcc, 
     #tmpFQTeamNameAccList.sort()
     
     tmpFQTeamNameAccList = sorted(tmpFQTeamNameAccList, key=itemgetter(2), reverse=True)
-    tmpFQTeamNameAccList = sorted(tmpFQTeamNameAccList, key=itemgetter(0))
+    tmpFQTeamNameAccList = sorted(tmpFQTeamNameAccList, key=itemgetter(0), reverse=True)
 
     tmpFQTeamNameAccList = tmpFQTeamNameAccList[:topN]
     if verbose:
