@@ -68,7 +68,10 @@ If you find this work useful in your research, please cite the following papers:
 
        source env.sh
 
-3. Install the Python dependencies.
+3. Install the Python dependencies through the following command: 
+
+       pip install -r requirements.txt
+
 
 4. Run the demos under the demo folder.
 
@@ -236,7 +239,7 @@ Ensemble Accuracies:
 </div>
 
 
-These notebooks loads weight files from models pretrained in the `training.ipynb` notebook. Links to these weight files and predictions obtained after training are included inside the notebooks.
+Links to the corresponding weight files and predictions obtained after training are included inside the notebooks.
 
 
 ## Supported Platforms
