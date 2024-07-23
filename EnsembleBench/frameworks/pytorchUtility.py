@@ -8,6 +8,104 @@ import numpy as np
 
 from collections import Counter
 
+import torchvision.models as models
+
+
+
+def load_model(model_name, device):
+
+    model = getattr(models, model_name)(pretrained=True)
+
+    if 'resnet' in model_name or 'resnext' in model_name:
+        num_features = model.fc.in_features
+        model.fc = nn.Linear(num_features, 10)
+    elif 'vgg' in model_name or 'alexnet' in model_name:
+        model.classifier[6] = nn.Linear(4096, 10)
+    elif 'shufflenet' in model_name:
+        model.fc = nn.Linear(1024, 10)
+    elif 'mnasnet' in model_name:
+        model.classifier[1] = nn.Linear(1280, 10)
+    elif 'densenet' in model_name:
+        num_features = model.classifier.in_features
+        model.classifier = nn.Linear(num_features, 10)
+    elif 'squeezenet' in model_name:
+        model.classifier[1] = nn.Conv2d(512, 10, kernel_size=(1,1), stride=(1,1))
+        model.num_classes = 10
+    elif 'mobilenet' in model_name:
+        num_features = model.classifier[1].in_features
+        model.classifier[1] = nn.Linear(num_features, 10)
+    elif 'googlenet' in model_name or 'inception' in model_name:
+        num_features = model.fc.in_features
+        model.fc = nn.Linear(num_features, 10)
+    elif 'efficientnet' in model_name:
+        num_features = model._fc.in_features
+        model._fc = nn.Linear(num_features, 10)
+    elif 'convnext' in model_name:
+        num_features = model.classifier[2].in_features
+        model.classifier[2] = nn.Linear(num_features, 10)
+    else:
+        print("model name not recognized")
+        return None
+    
+    return model.to(device)
+
+
+
+
+def ensemble_inference(models_ensemble, test_loader, device, voting='soft'):
+    all_labels = []
+    all_predictions = []
+    all_scores = []
+    correct = 0
+    total = 0
+
+    with torch.no_grad():
+        for inputs, labels in test_loader:
+            inputs, labels = inputs.to(device), labels.to(device)
+            batch_predictions = []
+            batch_scores = []
+
+            for model_name in models_ensemble.keys():
+                model = models_ensemble[model_name]
+                outputs = model(inputs)
+                batch_predictions.append(outputs.cpu().numpy())
+                batch_scores.append(torch.softmax(outputs, dim=1).cpu().numpy())
+
+            predictionVectorsStack = torch.stack([torch.tensor(pred) for pred in batch_predictions])
+            scoresVectorsStack = torch.stack([torch.tensor(score) for score in batch_scores])
+
+            if voting == 'soft':
+                final_predictions = torch.argmax(scoresVectorsStack.mean(dim=0), dim=1).to(device)
+            elif voting == 'plural':
+                final_predictions = torch.tensor(plurality_voting(predictionVectorsStack)).to(device)
+            elif voting == 'major':
+                final_predictions = torch.tensor(majority_voting(predictionVectorsStack)).to(device)
+            else:
+                raise ValueError('Voting method not selected or invalid')
+
+            all_labels.extend(labels.cpu().numpy())
+            all_predictions.extend(final_predictions.cpu().numpy())
+            all_scores.extend(scoresVectorsStack.mean(dim=0).cpu().numpy())
+
+            correct += final_predictions.eq(labels).sum().item()
+            total += labels.size(0)
+
+    test_accuracy = 100 * correct / total
+    print(f'Ensemble Test Accuracy with {voting.capitalize()} Voting: {test_accuracy:.2f}%')
+
+    all_labels = np.array(all_labels)
+    all_scores = np.array(all_scores)
+    if len(np.unique(all_labels)) == 2:
+        auc_score = roc_auc_score(all_labels, all_scores[:, 1])
+    else:
+        auc_score = roc_auc_score(all_labels, all_scores, multi_class='ovr')
+    print(f'Ensemble AUC Score: {auc_score:.4f}')
+    
+    return test_accuracy, auc_score, all_labels, all_predictions, all_scores
+
+
+
+
 
 def calAccuracy(output, target, topk=(1,)):
     """Computes the precision@k for the specified values of k"""
