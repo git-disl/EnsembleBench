@@ -9,6 +9,7 @@ import numpy as np
 from collections import Counter
 
 import torchvision.models as models
+from sklearn.metrics import roc_auc_score
 
 
 
