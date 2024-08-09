@@ -68,7 +68,10 @@ If you find this work useful in your research, please cite the following papers:
 
        source env.sh
 
-3. Install the Python dependencies.
+3. Install the Python dependencies through the following command: 
+
+       pip install -r requirements.txt
+
 
 4. Run the demos under the demo folder.
 
@@ -77,6 +80,166 @@ If you would like to simply use some functions provided by EnsembleBench, you ma
     
     pip install EnsembleBench
 
+
+
+### Usage
+After installation, simply import the library for usage. The `training.ipynb` notebook trains the model and saves the corresponding predictions and weight files locally.
+
+Validation predictions saved from the `training.ipynb` notebook can be used in the notebooks within the demo directory, based on which, a suitable set of ensemble models can then be selected for testing.
+
+###### Example (FashionMNIST):
+###### Ensemble Selection
+###### Code Output from `FocalDiversityBasedEnsembleSelection.ipynb`:
+<!-- ```python
+# Create a list of tuples (member, accuracy)
+member_accuracy_pairs = [(member, teamAccuracyDict[member]) for member in EQ_members if member in teamAccuracyDict]
+
+# Sort the list by accuracy in descending order
+sorted_member_accuracy_pairs = sorted(member_accuracy_pairs, key=lambda x: x[1], reverse=True)
+
+# Check if there are fewer than 3 members
+if len(sorted_member_accuracy_pairs) < 3:
+    top_3_members = sorted_member_accuracy_pairs
+    print("Less than 3 members are available in EQ_members.")
+else:
+    # Get the top 3 members with highest accuracy
+    top_3_members = sorted_member_accuracy_pairs[:3]
+
+# Extract the top 3 accuracies
+top_3_accuracies = [accuracy for member, accuracy in top_3_members]
+
+print("Top EQ_members with their accuracies:", top_3_members)
+``` -->
+<!-- ##### Output: -->
+```
+Top EQ_members with their accuracies:
+- ('4,5,6,9', 95.50000762939453)
+- ('5,6,9,10', 95.4416732788086)
+- ('2,4,7,9,10', 95.41667175292969)
+```
+
+To evaluate individual or ensemble testing accuracy, simply modify the `model_names`.
+<!-- ```python
+model_names = ['resnet18', 'resnet34']  # Modify this line to select desired models
+``` -->
+Ensure that the `model_paths` variable is updated to match the selected models:
+```python
+model_paths = {
+    'resnet18': r'./resnet18_best_model.pth',
+    'resnet34': r'./resnet34_best_model.pth'
+}
+```
+
+###### Comparison (Inference)
+
+<div style="display: flex; justify-content: space-between;">
+
+<div style="flex: 0 0 48%;">
+Individual Model Accuracies:
+<table style="font-size: 12px;">
+  <tr>
+    <th>#</th>
+    <th>Model</th>
+    <th>Test Acc (%)</th>
+  </tr>
+  <tr>
+    <td>0</td>
+    <td>ResNet34</td>
+    <td>94.18</td>
+  </tr>
+  <tr>
+    <td>1</td>
+    <td>ResNet50</td>
+    <td>93.66</td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td>ResNet101</td>
+    <td>93.65</td>
+  </tr>
+  <tr>
+    <td>3</td>
+    <td>ResNet152</td>
+    <td>93.50</td>
+  </tr>
+  <tr>
+    <td>4</td>
+    <td>AlexNet</td>
+    <td>92.22</td>
+  </tr>
+  <tr>
+    <td>5</td>
+    <td>DenseNet121</td>
+    <td>94.51</td>
+  </tr>
+  <tr>
+    <td>6</td>
+    <td>DenseNet161</td>
+    <td>94.60</td>
+  </tr>
+  <tr>
+    <td>7</td>
+    <td>DenseNet169</td>
+    <td>94.73</td>
+  </tr>
+  <tr>
+    <td>8</td>
+    <td>SqzNet1_1</td>
+    <td>93.01</td>
+  </tr>
+  <tr>
+    <td>9</td>
+    <td>GoogleNet</td>
+    <td>94.52</td>
+  </tr>
+  <tr>
+    <td>10</td>
+    <td>VGG11</td>
+    <td>92.14</td>
+  </tr>
+  <tr>
+    <td>11</td>
+    <td>VGG13</td>
+    <td>92.27</td>
+  </tr>
+  <tr>
+    <td>12</td>
+    <td>CvNeXtTiny</td>
+    <td>94.05</td>
+  </tr>
+</table>
+</div>
+
+<div style="flex: 0 0 48%;">
+Ensemble Accuracies:
+<table style="font-size: 12px;">
+  <tr>
+    <th>Members (Idx)</th>
+    <th>Val Acc (%)</th>
+    <th>Test Acc (%)</th>
+  </tr>
+  <tr>
+    <td>4, 5, 6, 9</td>
+    <td>95.50</td>
+    <td>95.08</td>
+  </tr>
+  <tr>
+    <td>5, 6, 9, 10</td>
+    <td>95.44</td>
+    <td>95.17</td>
+  </tr>
+  <tr>
+    <td>2, 4, 7, 9, 10</td>
+    <td>95.42</td>
+    <td>95.11</td>
+  </tr>
+</table>
+</div>
+
+</div>
+
+
+Links to the corresponding weight files and predictions obtained after training are included inside the notebooks.
 
 
 ## Supported Platforms
