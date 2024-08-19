@@ -87,6 +87,13 @@ After installation, simply import the library for usage. The `training.ipynb` no
 
 Validation predictions saved from the `training.ipynb` notebook can be used in the notebooks within the demo directory, based on which, a suitable set of ensemble models can then be selected for testing.
 
+
+Testing predictions are also saved through the `training.ipynb` notebook. These can be used to perform ensembling by simply modifying the variable `mode` to switch between training and testing configurations.
+
+To use testing predictions for ensembling modify the `mode` variable in your script to `testing` to use the saved testing predictions.
+
+This setup allows you to seamlessly transition between validation and testing phases for your model evaluations and ensemble selections.
+
 ###### Example (FashionMNIST):
 ###### Ensemble Selection
 ###### Code Output from `FocalDiversityBasedEnsembleSelection.ipynb`:
