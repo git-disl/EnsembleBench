@@ -86,13 +86,7 @@ If you would like to simply use some functions provided by EnsembleBench, you ma
 After installation, simply import the library for usage. The `training.ipynb` notebook trains the model and saves the corresponding predictions and weight files locally.
 
 Validation predictions saved from the `training.ipynb` notebook can be used in the notebooks within the demo directory, based on which, a suitable set of ensemble models can then be selected for testing.
-
-
-Testing predictions are also saved through the `training.ipynb` notebook. These can be used to perform ensembling by simply modifying the variable `mode` to switch between training and testing configurations.
-
-To use testing predictions for ensembling modify the `mode` variable in your script to `testing` to use the saved testing predictions.
-
-This setup allows you to seamlessly transition between validation and testing phases for your model evaluations and ensemble selections.
+Afterward, testing vectors can be loaded to perform a similar set of ensemble operations.
 
 ###### Example (FashionMNIST):
 ###### Ensemble Selection
